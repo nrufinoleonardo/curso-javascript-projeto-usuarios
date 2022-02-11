@@ -37,8 +37,8 @@ class UserController {
     getValues() {
         let user = {};
         // .forEach é um método para array e não pode ser usado para objeto
-
-        this.formEl.elements.forEach(
+        // transformando o this.formEl.elements em um array com o spread '...'
+        [...this.formEl.elements].forEach(
             (field, index) => {
 
                 if (field.name == "gender") {

@@ -7,17 +7,17 @@ class UserController {
         this.onSubmit();
     }
 
-    addLine(dataUsers) {
-        console.log(dataUsers);
+    addLine(dataUser) {
+        console.log(dataUser);
     
         var tr = document.createElement('tr');
     
         tr.innerHTML = `
-            <td><img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm"></td>
-            <td>${dataUsers.name}</td>
-            <td>${dataUsers.email}</td>
-            <td>${dataUsers.admin}</td>
-            <td>${dataUsers.birth}</td>
+            <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
+            <td>${dataUser.name}</td>
+            <td>${dataUser.email}</td>
+            <td>${dataUser.admin}</td>
+            <td>${dataUser.birth}</td>
             <td>
                 <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
                 <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
@@ -29,10 +29,41 @@ class UserController {
     onSubmit(){
         this.formEl.addEventListener("submit", (e) => {
             e.preventDefault();
-                
-           this.addLine(this.getValues());
+            
+            let values = this.getValues(); //obtendo todos os valores e armazenando em values
+            
+            this.getPhoto((content) => {
+                values.photo = content;
+                this.addLine(values);
+            } /** fechamento da função passada como parâmetro */);
+
         }); //fechamento do addEventListener de Submit       
     } //fechamento do método onSubmit
+
+    getPhoto(callback){
+        
+        let fileReader = new FileReader();//instanciando o FileReader
+
+        let elements = [...this.formEl.elements].filter((item)=>{
+            //filtrando o array de ítens do formulario e guardando em uma variável
+
+            if(item.name === "photo"){
+                return item;
+            } //verificando se o nome do atributo é photo e retornando caso positivo;
+
+        }/** fechamento do filter */);
+
+        
+        let file = elements[0].files[0]; //obtendo o primeiro ítem da lista e o primeiro elemento, pois só é permitida uma foto de perfil
+
+        
+        fileReader.onload = ()=>{
+            //esperando o arquivo "carregar"
+            callback(fileReader.result);
+        }//fechamento da função de callback (função de retorno)
+
+        fileReader.readAsDataURL(file);
+    }
 
     getValues() {
         let user = {};
